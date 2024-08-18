@@ -50,32 +50,43 @@ export default function Home() {
         flexDirection: 'column',
       }}
     >
-      <Box border="1px solid #333">
+      <Box
+        sx={{
+          width: { xs: '90%', sm: '80%', md: '70%' },
+          height: 'auto',
+          border: '1px solid #333',
+          padding: 2,
+          borderRadius: 2,
+        }}
+      >
         <Box
           sx={{
-            width: 800,
+            width: '100%',
             height: 100,
             bgcolor: '#658ba7',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
+            borderRadius: 2,
           }}
         >
           <Typography variant="h2" color="text.primary" textAlign="center">
             Inventory Items
           </Typography>
         </Box>
-        <Stack sx={{ width: 800, height: 300, overflow: 'auto' }} spacing={1}>
+        <Stack sx={{ width: '100%', height: 'auto', overflow: 'auto' }} spacing={1}>
           {firebaseItems.map((item, index) => (
             <Box
               key={index}
               sx={{
                 width: '100%',
-                height: 200,
+                height: 'auto',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 bgcolor: '#e6f9ff',
+                padding: 2,
+                borderRadius: 2,
               }}
             >
               <FormControlLabel
@@ -103,20 +114,30 @@ export default function Home() {
           ))}
         </Stack>
       </Box>
-      <Box sx={{ width: 800, height: 50, display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
+      <Box
+        sx={{
+          width: { xs: '90%', sm: '80%', md: '70%' },
+          height: 'auto',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+          marginTop: 2,
+        }}
+      >
         <TextField
           label="Item Name"
           type="text"
           value={newItemName}
           onChange={(e) => setNewItemName(e.target.value)}
-          sx={{ width: '50%', marginRight: 2 }}
+          sx={{ width: '100%', marginBottom: 2 }}
         />
         <TextField
           label="Quantity"
           type="number"
           value={newItemQuantity}
           onChange={(e) => setNewItemQuantity(e.target.value)}
-          sx={{ width: '20%', marginRight: 2 }}
+          sx={{ width: '100%', marginBottom: 2 }}
         />
         <Button variant="contained" color="primary" onClick={handleAddItem}>
           Add Item
