@@ -71,7 +71,7 @@ export default function Home() {
           }}
         >
           <Typography variant="h2" color="text.primary" textAlign="center">
-            Inventory Items
+            Items
           </Typography>
         </Box>
         <Stack sx={{ width: '100%', height: 'auto', overflow: 'auto' }} spacing={1}>
