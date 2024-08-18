@@ -1,95 +1,127 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
+import { Box, Stack, Typography, Checkbox, FormControlLabel, Button, TextField } from '@mui/material';
+import { Firestore } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, deleteDoc } from 'firebase/firestore';
+import { firestore } from './firebase';
+import { useState, useEffect } from 'react';
+
+// Your component code here
+const initialItems = [
+  { name: 'Tomato', selected: false, quantity: 0 },
+  // ... other items
+];
 
 export default function Home() {
+  const [items, setItems] = useState(initialItems);
+  const [firebaseItems, setFirebaseItems] = useState([]);
+  const [newItemName, setNewItemName] = useState('');
+  const [newItemQuantity, setNewItemQuantity] = useState(0);
+
+  // ... existing useEffect and handleSelectItem function
+
+  const handleAddItem = async () => {
+    try {
+      const itemRef = await addDoc(collection(firestore, 'items'), { name: newItemName, selected: false, quantity: newItemQuantity });
+      setFirebaseItems((prevItems) => [...prevItems, { id: itemRef.id, name: newItemName, selected: false, quantity: newItemQuantity }]);
+      setNewItemName('');
+      setNewItemQuantity(0);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleRemoveItem = async (item) => {
+    try {
+      await deleteDoc(doc(firestore, 'items', item.id));
+      setFirebaseItems((prevItems) => prevItems.filter((i) => i.id !== item.id));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+    <Box
+      sx={{
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+      }}
+    >
+      <Box border="1px solid #333">
+        <Box
+          sx={{
+            width: 800,
+            height: 100,
+            bgcolor: '#658ba7',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="h2" color="text.primary" textAlign="center">
+            Inventory Items
+          </Typography>
+        </Box>
+        <Stack sx={{ width: 800, height: 300, overflow: 'auto' }} spacing={1}>
+          {firebaseItems.map((item, index) => (
+            <Box
+              key={index}
+              sx={{
+                width: '100%',
+                height: 200,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                bgcolor: '#e6f9ff',
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={item.selected}
+                    onChange={() => handleSelectItem(item)}
+                  />
+                }
+                label={
+                  <Typography variant="h5" gutterBottom color="#a78365" fontWeight="bold">
+                    {item.name} (Quantity: {item.quantity})
+                  </Typography>
+                }
+              />
+              <Button
+                sx={{ marginLeft: 2 }}
+                variant="contained"
+                color="error"
+                onClick={() => handleRemoveItem(item)}
+              >
+                Remove
+              </Button>
+            </Box>
+          ))}
+        </Stack>
+      </Box>
+      <Box sx={{ width: 800, height: 50, display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
+        <TextField
+          label="Item Name"
+          type="text"
+          value={newItemName}
+          onChange={(e) => setNewItemName(e.target.value)}
+          sx={{ width: '50%', marginRight: 2 }}
         />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+        <TextField
+          label="Quantity"
+          type="number"
+          value={newItemQuantity}
+          onChange={(e) => setNewItemQuantity(e.target.value)}
+          sx={{ width: '20%', marginRight: 2 }}
+        />
+        <Button variant="contained" color="primary" onClick={handleAddItem}>
+          Add Item
+        </Button>
+      </Box>
+    </Box>
   );
 }
